@@ -7,12 +7,12 @@ import provaModel from '@/models/prova';
 // ---------------------------------------------------------
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
     try {
         await db();
 
-        const { id } = params;
+        const { id } = await context.params;
 
         const prova = await provaModel
             .findById(id)

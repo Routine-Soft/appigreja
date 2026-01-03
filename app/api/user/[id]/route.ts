@@ -7,12 +7,12 @@ import userModel from '@/models/user';
 // -----------------------------------
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
     try {
         await db();
 
-        const { id } = params;
+        const { id } = await context.params;
 
         const user = await userModel.findById(id);
 
