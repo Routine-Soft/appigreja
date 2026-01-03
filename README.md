@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# :computer E-learning Platform Single Tenant
+This is a e-learning platform single tenant.
+---
+### Dashboard Useradmin: 
+- components/dashboard/Home.tsx (Dashboard Home page)
+- components/dashboard/Cursolist.tsx (list of courses)
+- components/dashboard/CriarCurso.tsx (create courses)
+- components/dashboard/ProvasList.tsx (list of tests)
+- components/dashboard/CriarProva.tsx (create test)
+- components/dashboard/AlunosList.tsx (list of users/students)
 
-## Getting Started
+### Dashboard User: 
+- components/dashboard/UserHome.tsx (Dashboard Home page)
+- components/dashboard/CursosDisponiveis.tsx ()
+- components/dashboard/CursosMatriculados.tsx ()
+- components/dashboard/ProvasDisponiveis.tsx ()
+- components/dashboard/PerfilAluno.tsx ()
 
-First, run the development server:
+Admin
+Histórico de Aprovado e Rejeitado, o que fazer?
+ProvasList.tsx retirar any
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Aluno
+Rejeitado -> aparecer de novo botão Solicitar Matricula
+Construir componente CursoConteudo.tsx com curso e modulos
+Construir componente ProvaConteudo.tsx com suas variações de respostas
+Os cursos que o aluno está matriculado, aparecer botão "Estudar" e redirecionar para CursoConteudo.tsx quando ele clicar.
+As provas dos cursos que o aluno está matriculado, aparecer em ProvasDisponiveis.tsx com botão "Começar Prova" em cada prova, e ao clicar, redirecionar para ProvaConteudo.tsx
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+Se quiser, eu também monto:
 
-To learn more about Next.js, take a look at the following resources:
+Página no admin para filtrar aprovados / pendentes / rejeitados
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Página no user mostrando provas disponíveis APENAS dos cursos aprovados
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Página para ver histórico de reprovação
 
-## Deploy on Vercel
+👉 CONFIRME:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Quer que eu GENERE um menu novo no dashboard admin para acessar SolicitacoesMatricula.tsx?
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Sim / Não?
+
+Assim eu te entrego tudo conectado.
+
+# mvp
