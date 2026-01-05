@@ -10,6 +10,7 @@ interface Modulo {
 }
 
 interface Curso {
+    imagem?: string;
     _id: string;
     titulo: string;
     descricao?: string;
@@ -42,6 +43,9 @@ export default function CursoConteudo({ cursoId }: { cursoId: string }) {
     return (
         <div className="space-y-6">
             <div>
+                {curso.imagem && (
+                    <img src={curso.imagem} alt={curso.titulo} className="w-full h-64 object-cover rounded mb-4" />
+                )}
                 <h1 className="text-3xl font-bold">{curso.titulo}</h1>
                 {curso.descricao && (
                     <p className="text-gray-600 mt-2">{curso.descricao}</p>
