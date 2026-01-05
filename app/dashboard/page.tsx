@@ -94,7 +94,7 @@ export default function UserDashboard() {
             >
                 <div className="p-6 border-b border-emerald-700">
                     <h1 className="text-xl font-bold leading-tight">
-                        Nathan Seg<br />Trabalho LTDA
+                        Portal CNH Fácil<br />
                     </h1>
                     <p className="text-emerald-100 text-sm mt-1">
                         {user.name}
@@ -115,7 +115,7 @@ export default function UserDashboard() {
                             }
                         `}
                     >
-                        Seus Documentos
+                        Cursos
                     </button>
 
                     <button

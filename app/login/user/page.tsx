@@ -72,7 +72,7 @@ export default function UserLoginPage() {
                             </svg>
                         </div>
                         <h1 className="text-3xl font-bold text-gray-800">Login do Aluno</h1>
-                        <p className="text-gray-600">Acesse sua conta para continuar estudando</p>
+                        <p className="text-gray-600">Acesse sua conta para estudar</p>
                     </div>
 
                     {/* Error Message */}
@@ -105,7 +105,7 @@ export default function UserLoginPage() {
                                 Senha
                             </label>
                             <input
-                                type="password"
+                                type="text"
                                 id="password"
                                 name="password"
                                 value={formData.password}

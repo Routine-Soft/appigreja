@@ -85,7 +85,7 @@ export default function UserRegisterPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                             </svg>
                         </div>
-                        <h1 className="text-3xl font-bold text-gray-800">Criar Conta</h1>
+                        <h1 className="text-3xl font-bold text-gray-800">Criar Conta de Aluno</h1>
                         <p className="text-gray-600">Cadastre-se para começar a estudar</p>
                     </div>
 
@@ -131,7 +131,7 @@ export default function UserRegisterPage() {
 
                         <div>
                             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                                Username
+                                Nome de usuário
                             </label>
                             <input
                                 type="text"
@@ -140,7 +140,7 @@ export default function UserRegisterPage() {
                                 value={formData.username}
                                 onChange={handleChange}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                                placeholder="seuusername"
+                                placeholder="nomedeusuario"
                             />
                         </div>
 
@@ -164,7 +164,7 @@ export default function UserRegisterPage() {
                                 Senha <span className="text-red-500">*</span>
                             </label>
                             <input
-                                type="password"
+                                type="text"
                                 id="password"
                                 name="password"
                                 value={formData.password}
@@ -181,7 +181,7 @@ export default function UserRegisterPage() {
                                 Confirmar Senha <span className="text-red-500">*</span>
                             </label>
                             <input
-                                type="password"
+                                type="text"
                                 id="confirmPassword"
                                 name="confirmPassword"
                                 value={formData.confirmPassword}

@@ -25,6 +25,8 @@ interface Matricula {
 
 export default function SolicitacoesMatricula() {
     const [lista, setLista] = useState<Matricula[]>([]);
+    const pendentes = lista.filter(m => m.status === 'pendente');
+
     const [loading, setLoading] = useState<boolean>(true);
     const [updatingId, setUpdatingId] = useState<string | null>(null);
 
@@ -73,13 +75,13 @@ export default function SolicitacoesMatricula() {
         <div>
             <h2 className="text-2xl font-bold mb-4">Solicitações de Matrícula</h2>
 
-            {lista.length === 0 ? (
+            {pendentes.length === 0 ? (
                 <div className="bg-white p-4 rounded shadow">
                     <p className="text-gray-600">Nenhuma solicitação encontrada.</p>
                 </div>
             ) : (
                 <div className="space-y-3">
-                    {lista.map((m) => (
+                    {pendentes.map((m) => (
                         <div key={m._id} className="p-4 bg-white shadow rounded">
                             <p><b>Aluno:</b> {m.userId?.name ?? m.userId?.email ?? '—'}</p>
                             <p><b>Curso:</b> {m.cursoId?.titulo ?? '—'}</p>

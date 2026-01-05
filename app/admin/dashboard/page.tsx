@@ -85,7 +85,7 @@ export default function UserAdminDashboard() {
       >
         <div className="p-6 border-b border-emerald-700">
           <h1 className="text-xl font-bold leading-tight">
-            Nathan Seg<br />Trabalho LTDA
+            Portal CNH Fácil<br />
           </h1>
           <p className="text-emerald-100 text-sm mt-1">
             Admin: {useradmin.name || useradmin.email}
@@ -94,10 +94,11 @@ export default function UserAdminDashboard() {
 
         <nav className="flex-1 p-4 space-y-2">
           {[
-            { id: 'home', label: 'Home' },
-            { id: 'cursos', label: 'Documentos' },
-            { id: 'criar-curso', label: 'Criar Documento' },
-            { id: 'alunos', label: 'Clientes' },
+            { id: 'home', label: 'Pagina Inicial' },
+            { id: 'cursos', label: 'Cursos' },
+            { id: 'criar-curso', label: 'Criar Curso' },
+            { id: 'alunos', label: 'Alunos' },
+            { id: 'solicitacoes-matricula', label: 'Solicitações' },
           ].map((item) => (
             <button
               key={item.id}
@@ -140,7 +141,7 @@ export default function UserAdminDashboard() {
             ☰
           </button>
           <span className="font-semibold text-gray-700">
-            Painel Administrativo
+            Portal CNH Fácil
           </span>
         </header>
 

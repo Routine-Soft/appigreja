@@ -5,7 +5,9 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
 type Curso = { _id: string; titulo: string; descricao?: string; imagem?: string };
-type Matricula = { cursoId: { _id: string }; status: 'pendente' | 'aprovado' | 'rejeitado'; };
+type Matricula = { 
+    cursoId: { _id: string } | null; 
+    status: 'pendente' | 'aprovado' | 'rejeitado'; };
 
 export default function CursosDisponiveis({
     userId,
@@ -42,13 +44,16 @@ export default function CursosDisponiveis({
     }
 
     function getStatus(cursoId: string) {
-        const m = matriculas.find((x) => x.cursoId._id === cursoId);
+        const m = matriculas.find(
+            (x) => x.cursoId?._id === cursoId
+        );
+
         return m?.status;
     }
 
     return (
         <div>
-            <h2 className="text-2xl font-bold mb-3">Seus documentos</h2>
+            <h2 className="text-2xl font-bold mb-3">Cursos</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {cursos.map((curso) => {

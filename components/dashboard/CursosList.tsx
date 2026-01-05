@@ -356,7 +356,7 @@ export default function CursosList({ onEdit }: CursosListProps) {
                                                                 </div>
                                                                 <div className="text-sm text-gray-500">Ordem: {m.ordem ?? '-'}</div>
                                                             </div>
-                                                            {m.conteudo && <div className="mt-2 text-sm text-gray-700">{m.conteudo}</div>}
+                                                            {/* {m.conteudo && <div className="mt-2 text-sm text-gray-700">{m.conteudo}</div>} */}
                                                         </div>
                                                     ))}
                                                 </div>

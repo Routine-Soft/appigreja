@@ -159,7 +159,7 @@ export default function UserAdminRegisterPage() {
                                 Senha <span className="text-red-500">*</span>
                             </label>
                             <input
-                                type="password"
+                                type="text"
                                 id="password"
                                 name="password"
                                 value={formData.password}
@@ -176,7 +176,7 @@ export default function UserAdminRegisterPage() {
                                 Confirmar Senha <span className="text-red-500">*</span>
                             </label>
                             <input
-                                type="password"
+                                type="text"
                                 id="confirmPassword"
                                 name="confirmPassword"
                                 value={formData.confirmPassword}

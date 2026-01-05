@@ -154,7 +154,7 @@ export default function Home({ onNavigate }: HomeProps) {
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-emerald-500">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-gray-600 text-sm font-medium">Total de Documentos</p>
+                            <p className="text-gray-600 text-sm font-medium">Total de Cursos</p>
                             <p className="text-3xl font-bold text-gray-800 mt-2">{stats.cursos}</p>
                         </div>
                         <div className="bg-emerald-100 rounded-full p-3">
@@ -169,7 +169,7 @@ export default function Home({ onNavigate }: HomeProps) {
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-teal-500">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-gray-600 text-sm font-medium">Total de outras info</p>
+                            <p className="text-gray-600 text-sm font-medium">Total de outras infos</p>
                             <p className="text-3xl font-bold text-gray-800 mt-2">{stats.provas}</p>
                         </div>
                         <div className="bg-teal-100 rounded-full p-3">
@@ -184,7 +184,7 @@ export default function Home({ onNavigate }: HomeProps) {
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-cyan-500">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-gray-600 text-sm font-medium">Total de Clientes</p>
+                            <p className="text-gray-600 text-sm font-medium">Total de Alunos</p>
                             <p className="text-3xl font-bold text-gray-800 mt-2">{stats.alunos}</p>
                         </div>
                         <div className="bg-cyan-100 rounded-full p-3">
