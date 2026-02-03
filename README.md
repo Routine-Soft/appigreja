@@ -122,4 +122,4 @@ max_churches
 
 validar na rota login: se usuario tentar fazer login em um churchId diferente do seu = usuário nao cadastrado nessa igreja
 
-tirar church? e deixar só churchId?
+tirar church? e deixar só churchId?# appigreja
