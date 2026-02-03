@@ -8,7 +8,6 @@ import CriarCurso from '@/components/dashboard/curso/CriarCurso';
 import { UserIdentityDTO } from "@/dto/user/UserDTO";
 import { Can } from "@/components/can";
 import { PERMISSIONS } from "@/utils/permissions";
-import CelulasManager from '@/components/dashboard/celula/CelulasManager';
 import Membros from '@/components/dashboard/Membros';
 import CreateUserManual from '@/components/dashboard/CreateUserManual';
 
