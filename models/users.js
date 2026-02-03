@@ -7,23 +7,45 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'O nome é obrigatório']
     },
-    username: {
-        type: String,
-        trim: true,
-        lowercase: true,
-        unique: true,
-        sparse: true, // Permite múltiplos documentos sem username
-    },
     phone: {
         type: String,
         trim: true,
     },
     email: {
         type: String,
-        required: [true, 'O email é obrigatório'],
         unique: true,
         lowercase: true,
         trim: true,
+    },
+    birthdate: { 
+        type: Date,
+    },
+    gender: {
+        type: String,
+    },
+    church: {
+        type: String,
+    }, 
+    cep: {
+        type: String,
+    },
+    address: {
+        type: String,
+    },
+    neighborhood: {
+        type: String,
+    },
+    city: {
+        type: String,
+    },
+    state: {
+        type: String,
+    },
+    invitationofgrace: {
+        type: String,
+    },
+    baptized: {
+        type: Boolean,
     },
     password: {
         type: String,
@@ -41,7 +63,10 @@ const userSchema = new Schema({
         type: Date,
         select: false
     },
-    // tenantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Tenant', required: true }
+    permissions: {
+        type: [String],
+        default: []
+    }
 }, { 
     timestamps: true,
 });

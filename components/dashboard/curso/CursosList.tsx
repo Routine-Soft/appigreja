@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { CursoService } from '@/service/curso/CursoService';
 
 interface Modulo {
     titulo: string;
@@ -39,15 +40,12 @@ export default function CursosList({ onEdit }: CursosListProps) {
 
     const fetchCursos = async () => {
         try {
-            const response = await fetch(`/api/cursos`);
-            const data = await response.json();
-            if (response.ok) {
-                setCursos(data.cursos || []);
-            } else {
-                setError(data.error || 'Erro ao carregar cursos');
+            const data = await CursoService.getAllCursos();
+            setCursos(data.cursos);
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message || 'Erro ao carregar cursos');
             }
-        } catch (err) {
-            setError('Erro ao conectar com o servidor');
         } finally {
             setLoading(false);
         }
@@ -57,18 +55,12 @@ export default function CursosList({ onEdit }: CursosListProps) {
         if (!confirm('Tem certeza que deseja deletar este curso?')) return;
 
         try {
-            const response = await fetch(`/api/cursos/${id}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                setCursos(cursos.filter(c => c._id !== id));
-            } else {
-                const data = await response.json();
-                alert(data.error || 'Erro ao deletar curso');
+            await CursoService.deleteCurso(id);
+            setCursos((prev) => prev.filter((c) => c._id !== id));
+        } catch (error) {
+            if (error instanceof Error) {
+                alert(error.message || 'Erro ao deletar curso');
             }
-        } catch (err) {
-            alert('Erro ao conectar com o servidor');
         }
     };
 
@@ -81,8 +73,8 @@ export default function CursosList({ onEdit }: CursosListProps) {
             duracao: curso.duracao,
             preco: curso.preco,
             imagem: curso.imagem,
-            ativo: curso.ativo
-            ,modulos: curso.modulos || [],
+            ativo: curso.ativo,
+            modulos: curso.modulos || [],
             createdAt: curso.createdAt
         });
     };
@@ -95,24 +87,15 @@ export default function CursosList({ onEdit }: CursosListProps) {
                 preco: editForm.preco ? Number(editForm.preco) : undefined,
             };
 
-            const response = await fetch(`/api/cursos/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
+            await CursoService.updateCurso(id, payload);
 
-            if (response.ok) {
-                await fetchCursos();
-                setEditingId(null);
-                setEditForm({});
-            } else {
-                const data = await response.json();
-                alert(data.error || 'Erro ao atualizar curso');
+            await fetchCursos();
+            setEditingId(null);
+            setEditForm({});
+        } catch (error) {
+            if (error instanceof Error) {
+                alert(error.message || 'Erro ao atualizar curso');
             }
-        } catch (err) {
-            alert('Erro ao conectar com o servidor');
         }
     };
 
@@ -129,8 +112,8 @@ export default function CursosList({ onEdit }: CursosListProps) {
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800">Cursos</h1>
-                    <p className="text-gray-600 mt-2">Gerencie seus cursos</p>
+                    <h1 className="text-3xl font-bold text-gray-800">Estudos</h1>
+                    <p className="text-gray-600 mt-2">Gerencie seus estudos</p>
                 </div>
 
                 {onEdit && (
@@ -141,7 +124,7 @@ export default function CursosList({ onEdit }: CursosListProps) {
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                         </svg>
-                        Criar Novo Curso
+                        Criar Novo
                     </button>
                 )}
             </div>

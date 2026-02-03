@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/database/db';
-import userModel from '@/models/user';
+import userModel from '@/models/users';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 

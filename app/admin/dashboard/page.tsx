@@ -2,57 +2,50 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-
 import Home from '@/components/dashboard/Home';
-import CursosList from '@/components/dashboard/CursosList';
-import CriarCurso from '@/components/dashboard/CriarCurso';
-import ProvasList from '@/components/dashboard/ProvasList';
-import CriarProva from '@/components/dashboard/CriarProva';
-import AlunosList from '@/components/dashboard/AlunosList';
-import SolicitacoesMatricula from '@/components/dashboard/SolicitacoesMatricula';
+import CursosList from '@/components/dashboard/curso/CursosList';
+import CriarCurso from '@/components/dashboard/curso/CriarCurso';
+import { UserIdentityDTO } from "@/dto/user/UserDTO";
+import { Can } from "@/components/can";
+import { PERMISSIONS } from "@/utils/permissions";
+import CelulasManager from '@/components/dashboard/celula/CelulasManager';
+import Membros from '@/components/dashboard/Membros';
+import CreateUserManual from '@/components/dashboard/CreateUserManual';
 
 type ActiveSection =
   | 'home'
   | 'cursos'
   | 'criar-curso'
-  | 'provas'
-  | 'criar-prova'
-  | 'alunos'
-  | 'solicitacoes-matricula';
-
-type UserAdmin = {
-  _id: string;
-  name: string;
-  email: string;
-};
+  | 'membros'
+  | 'celulas'
+  | 'create-user-manual';
 
 export default function UserAdminDashboard() {
   const router = useRouter();
 
-  const [activeSection, setActiveSection] =
-    useState<ActiveSection>('home');
-  const [useradmin, setUseradmin] = useState<UserAdmin | null>(null);
+  const [activeSection, setActiveSection] = useState<ActiveSection>('home');
+  const [user, setUser] = useState<UserIdentityDTO | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const useradminData = localStorage.getItem('useradmin');
+    const useradminData = localStorage.getItem('user');
     if (!useradminData) {
-      router.push('/login/useradmin');
+      router.push('/login/user');
       return;
     }
 
-    const parsed: UserAdmin = JSON.parse(useradminData);
+    const parsed: UserIdentityDTO = JSON.parse(useradminData);
     queueMicrotask(() => {
-      setUseradmin(parsed);
+      setUser(parsed);
     })
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('useradmin');
-    router.push('/login/useradmin');
+    localStorage.removeItem('user');
+    router.push('/login/user');
   };
 
-  if (!useradmin) {
+  if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-600">Carregando...</p>
@@ -61,12 +54,12 @@ export default function UserAdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-zinc-50 flex">
 
       {/* OVERLAY MOBILE */}
       {menuOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          className="fixed inset-0 bg-white/40 z-40 md:hidden"
           onClick={() => setMenuOpen(false)}
         />
       )}
@@ -74,55 +67,139 @@ export default function UserAdminDashboard() {
       {/* SIDEBAR */}
       <aside
         className={`
-          bg-gradient-to-b from-emerald-600 to-teal-600
-          text-white flex flex-col w-64
-          md:relative md:translate-x-0
-          fixed top-0 left-0 h-screen z-50
+          fixed top-0 left-0 z-50 h-screen w-64
+          bg-gradient-to-b from-zinc-900 via-zinc-800 to-zinc-700
+          text-white flex flex-col
           transition-transform duration-300
           ${menuOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:h-auto
+          md:translate-x-0
         `}
       >
-        <div className="p-6 border-b border-emerald-700">
-          <h1 className="text-xl font-bold leading-tight">
-            Portal CNH Fácil<br />
+        <div className="p-6 border-b border-white-700 text-white">
+          <h1 className="text-xl font-bold text-white leading-tight">
+            SUA LOGO<br />
           </h1>
-          <p className="text-emerald-100 text-sm mt-1">
-            Admin: {useradmin.name || useradmin.email}
+          <p className="text-white text-sm mt-1">
+            Admin: {user.name || user.email}
           </p>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
-          {[
-            { id: 'home', label: 'Pagina Inicial' },
-            { id: 'cursos', label: 'Cursos' },
-            { id: 'criar-curso', label: 'Criar Curso' },
-            { id: 'alunos', label: 'Alunos' },
-            { id: 'solicitacoes-matricula', label: 'Solicitações' },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setActiveSection(item.id as ActiveSection);
-                setMenuOpen(false);
-              }}
-              className={`w-full text-left px-4 py-3 rounded-lg transition
-                ${
-                  activeSection === item.id
-                    ? 'bg-white text-emerald-600 font-semibold'
-                    : 'hover:bg-emerald-700'
-                }
-              `}
-            >
-              {item.label}
-            </button>
-          ))}
-        </nav>
+<nav className="flex-1 p-4 space-y-2">
+
+  {/* TODO MUNDO */}
+  <button
+    onClick={() => {
+      setActiveSection('home');
+      setMenuOpen(false);
+    }}
+    className={`w-full text-left text-white px-4 py-3 rounded-lg transition
+      ${activeSection === 'home'
+        ? 'bg-zinc-500 font-semibold'
+        : 'hover:bg-zinc-500'
+      }
+    `}
+  >
+    Inicio
+  </button>
+
+  {/* ADMIN OU LIDER DE MEMBROS */}
+  <Can
+    user={user}
+    permissions={[
+      PERMISSIONS.ADMIN_ACCESS,
+      PERMISSIONS.CELULA_ACCESS
+    ]}
+  >
+    <button
+      onClick={() => {
+        setActiveSection('membros');
+        setMenuOpen(false);
+      }}
+      className={`w-full text-left text-white px-4 py-3 rounded-lg transition
+        ${activeSection === 'membros'
+          ? 'bg-zinc-500 font-semibold'
+          : 'hover:bg-zinc-500'
+        }
+      `}
+    >
+      Membros
+    </button>
+  </Can>
+
+  {/* ADMIN OU LIDER DE MEMBROS */}
+  <Can
+    user={user}
+    permissions={[
+      PERMISSIONS.ADMIN_ACCESS,
+      PERMISSIONS.CELULA_ACCESS
+    ]}
+  >
+    <button
+      onClick={() => {
+        setActiveSection('create-user-manual');
+        setMenuOpen(false);
+      }}
+      className={`w-full text-left text-white px-4 py-3 rounded-lg transition
+        ${activeSection === 'create-user-manual'
+          ? 'bg-zinc-500 font-semibold'
+          : 'hover:bg-zinc-500'
+        }
+      `}
+    >
+      Cadastrar Membro
+    </button>
+  </Can>
+
+
+  {/* ADMIN */}
+  {/* <Can user={user} permissions={[PERMISSIONS.ADMIN_ACCESS]}>
+    <button
+      onClick={() => {
+        setActiveSection('cursos');
+        setMenuOpen(false);
+      }}
+      className={`w-full text-left text-white px-4 py-3 rounded-lg transition
+        ${activeSection === 'cursos'
+          ? 'bg-zinc-500 font-semibold'
+          : 'hover:bg-zinc-500'
+        }
+      `}
+    >
+      Gerenciar Estudos
+    </button>
+  </Can> */}
+
+  {/* ADMIN OU LIDER DE Celula */}
+  {/* <Can
+    user={user}
+    permissions={[
+      PERMISSIONS.ADMIN_ACCESS,
+      PERMISSIONS.CELULA_ACCESS
+    ]}
+  >
+    <button
+      onClick={() => {
+        setActiveSection('celulas');
+        setMenuOpen(false);
+      }}
+      className={`w-full text-left text-white px-4 py-3 rounded-lg transition
+        ${activeSection === 'celulas'
+          ? 'bg-zinc-500 font-semibold'
+          : 'hover:bg-zinc-500'
+        }
+      `}
+    >
+      Gerenciar Celulas
+    </button>
+  </Can> */}
+
+  </nav>
+
 
         <div className="p-4 border-t border-emerald-700">
           <button
             onClick={handleLogout}
-            className="w-full px-4 py-3 rounded-lg bg-red-500 hover:bg-red-600 font-semibold transition"
+            className="w-full px-4 py-3 rounded-lg bg-red-500 hover:bg-red-600 font-semibold transition text-white"
           >
             Sair
           </button>
@@ -130,47 +207,45 @@ export default function UserAdminDashboard() {
       </aside>
 
       {/* CONTEÚDO */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto md:ml-64">
 
         {/* HEADER MOBILE */}
-        <header className="md:hidden flex items-center gap-4 p-4 bg-white shadow-sm">
+        <header className="md:hidden flex items-center gap-4 p-4 bg-zinc-900 shadow-sm">
           <button
             onClick={() => setMenuOpen(true)}
-            className="text-2xl font-bold"
+            className="text-2xl font-bold text-white"
           >
             ☰
           </button>
-          <span className="font-semibold text-gray-700">
-            Portal CNH Fácil
+          <span className="font-semibold text-white">
+            SUA LOGO
           </span>
         </header>
 
         <div className="p-4 md:p-8">
           {activeSection === 'home' && (
-            <Home onNavigate={(s) => setActiveSection(s as ActiveSection)} />
+            <Home />
           )}
 
-          {activeSection === 'cursos' && (
+          {/* {activeSection === 'cursos' && (
             <CursosList onEdit={() => setActiveSection('criar-curso')} />
           )}
 
           {activeSection === 'criar-curso' && (
             <CriarCurso onSuccess={() => setActiveSection('cursos')} />
+          )} */}
+
+          {activeSection === 'membros' && (
+            <Membros/>
           )}
 
-          {activeSection === 'provas' && (
-            <ProvasList onEdit={() => setActiveSection('criar-prova')} />
+          {activeSection === 'create-user-manual' && (
+            <CreateUserManual/>
           )}
 
-          {activeSection === 'criar-prova' && (
-            <CriarProva onSuccess={() => setActiveSection('provas')} />
-          )}
-
-          {activeSection === 'alunos' && <AlunosList />}
-
-          {activeSection === 'solicitacoes-matricula' && (
-            <SolicitacoesMatricula />
-          )}
+          {/* {activeSection === 'celulas' && (
+            <CelulasManager />
+          )} */}
         </div>
       </main>
     </div>

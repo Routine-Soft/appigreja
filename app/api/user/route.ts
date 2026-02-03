@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/database/db';
-import userModel from '@/models/user';
+import userModel from '@/models/users';
 
 export async function GET(request: NextRequest) {
     try {
@@ -8,6 +8,13 @@ export async function GET(request: NextRequest) {
 
         // Busca TODOS os usuários (single tenant)
         const users = await userModel.find().sort({ createdAt: -1 });
+
+        if (!users || users.length === 0) {
+            return NextResponse.json(
+                { error: 'Não há usuários ainda' },
+                { status: 404 }
+            );
+        }
 
         return NextResponse.json(
             {

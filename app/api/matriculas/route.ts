@@ -3,7 +3,7 @@ import db from "@/database/db";
 import matriculaModel from "@/models/matricula";
 
 // 👇 IMPORTA SÓ PRA REGISTRAR NO MONGOOSE
-import "@/models/user";
+import "@/models/users";
 import "@/models/curso";
 
 export async function POST(request: NextRequest) {

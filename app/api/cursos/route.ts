@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/database/db';
 import cursoModel from '@/models/curso';
+import { CreateCursoDTO, CursoResponseDTO } from '@/dto/cursos/CursoDTO';
+
 
 // ------------------------------------------------
 // GET — Listar todos os cursos (single tenant)
@@ -31,39 +33,63 @@ export async function POST(request: NextRequest) {
     try {
         await db();
 
-        const body = await request.json();
+        const data: CreateCursoDTO = await request.json();
 
-        const {
-            titulo,
-            descricao,
-            categoria,
-            duracao,
-            preco,
-            imagem,
-            modulos
-        } = body;
+        // const {
+        //     titulo,
+        //     descricao,
+        //     categoria,
+        //     duracao,
+        //     imagem,
+        //     modulos,
+        //     preco,
+        //     videoUrl,
+        // } = body;
 
-        if (!titulo) {
+        if (!data.titulo) {
             return NextResponse.json(
                 { error: 'O título do curso é obrigatório' },
                 { status: 400 }
             );
         }
 
-        const novoCurso = new cursoModel({
-            titulo,
-            descricao,
-            categoria,
-            duracao,
-            preco,
-            imagem,
-            modulos: Array.isArray(modulos) ? modulos : [],
-        });
+        const curso = await cursoModel.create({
+            titulo: data.titulo,
+            descricao: data.descricao,
+            categoria: data.categoria,
+            duracao: data.duracao,
+            imagem: data.imagem,
+            ativo: data.ativo ?? true,
+            modulos: data.modulos ?? [],
+        })
 
-        await novoCurso.save();
+        const response: CursoResponseDTO = {
+            _id: curso._id.toString(),
+            titulo: curso.titulo,
+            descricao: curso.descricao,
+            categoria: curso.categoria,
+            duracao: curso.duracao,
+            imagem: curso.imagem,
+            ativo: curso.ativo || false,
+            modulos: curso.modulos,
+            createdAt: curso.createdAt,
+            updatedAt: curso.updatedAt,
+        };
+        // const curso = new cursoModel({
+        //     titulo,
+        //     descricao,
+        //     categoria,
+        //     duracao,
+        //     imagem,
+        //     preco,
+        //     videoUrl,
+        //     modulos: Array.isArray(modulos) ? modulos : [],
+        // });
+
+        // await curso.save();
 
         return NextResponse.json(
-            { message: 'Curso criado com sucesso', curso: novoCurso },
+            { message: 'Curso criado com sucesso', curso: response },
             { status: 201 }
         );
 

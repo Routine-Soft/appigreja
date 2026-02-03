@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/database/db';
-import userModel from '@/models/user';
+import userModel from '@/models/users';
 import argon2 from 'argon2';
 
 export async function POST(request: NextRequest) {
@@ -16,22 +16,30 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Buscar usuário no sistema (single tenant)
+        // Buscar usuário
         const user = await userModel.findOne({ email }).select('+password');
 
-        if (!user) {
+        if (!user || !user.password) {
             return NextResponse.json(
-                { error: 'Credenciais inválidas' },
+                { error: 'Email ou senha incorreto' },
                 { status: 401 }
             );
         }
 
-        // Verificar senha
-        const isPasswordValid = await argon2.verify(user.password, password);
+        let isPasswordValid = false;
+
+        try {
+            isPasswordValid = await argon2.verify(user.password, password);
+        } catch {
+            return NextResponse.json(
+                { error: 'Email ou senha incorreto' },
+                { status: 401 }
+            );
+        }
 
         if (!isPasswordValid) {
             return NextResponse.json(
-                { error: 'Credenciais inválidas' },
+                { error: 'Email ou senha incorreto' },
                 { status: 401 }
             );
         }

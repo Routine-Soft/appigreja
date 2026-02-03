@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import CursosDisponiveis from './CursosDisponiveis';
-import CursosMatriculados from './CursosMatriculados';
+import CursosDisponiveis from './curso/CursosDisponiveis';
+import CursosMatriculados from './curso/CursosMatriculados';
 
 type Props = {
     user: {

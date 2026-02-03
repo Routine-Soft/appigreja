@@ -1,137 +1,208 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import SolicitacoesMatricula from './SolicitacoesMatricula';
+import { UserService } from '@/service/user/UserService';
+import { UserResponseDTO } from '@/dto/user/UserDTO';
 
-function ManualEnrollForm() {
-    const [courses, setCourses] = useState<{ _id: string; titulo: string }[]>([]);
-    const [selectedCourse, setSelectedCourse] = useState('');
-    const [email, setEmail] = useState('');
-    const [loadingEnroll, setLoadingEnroll] = useState(false);
-    const [message, setMessage] = useState('');
+export default function Home() {
+    const [loading, setLoading] = useState(true);
+    const currentYear = new Date().getFullYear();
+    const [year, setYear] = useState(currentYear);
+    const [month, setMonth] = useState<number | null>(null); // null = anual
+    const [users, setUsers] = useState<UserResponseDTO[]>([]);
 
-    useEffect(() => {
-        const load = async () => {
-            try {
-                const res = await fetch('/api/cursos');
-                const data = await res.json();
-                setCourses(data.cursos || []);
-            } catch (err) {
-                console.error('Erro ao carregar cursos para matrícula manual', err);
-            }
-        };
+    const [stats, setStats] = useState({
+        total: 0,
+        baptized: 0,
+        notBaptized: 0,
+        aceitouJesus: 0,
+        reconciliou: 0,
+        recebeuOracao: 0,
+        trocaIgreja: 0,
+        homem: 0,
+        mulher: 0,
+    });
 
-        load();
-    }, []);
+    const [ageStats, setAgeStats] = useState({
+        criancas: 0,
+        adolescentes: 0,
+        jovens: 0,
+        adultos: 0,
+        meiaIdade: 0,
+        idosos: 0,
+    });
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setMessage('');
-        if (!email || !selectedCourse) {
-            setMessage('Informe email e curso.');
-            return;
+    const totalGeral = users.length;
+
+    const calculateAge = (birthdate: Date | string) => {
+        const birth = new Date(birthdate);
+        const today = new Date();
+
+        let age = today.getFullYear() - birth.getFullYear();
+        const monthDiff = today.getMonth() - birth.getMonth();
+
+        if (
+            monthDiff < 0 ||
+            (monthDiff === 0 && today.getDate() < birth.getDate())
+        ) {
+            age--;
         }
 
-        setLoadingEnroll(true);
-
-        try {
-            const res = await fetch('/api/matriculas', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, cursoId: selectedCourse })
-            });
-
-            const data = await res.json();
-            if (res.ok) {
-                setMessage('Matrícula criada com sucesso.');
-                setEmail('');
-                setSelectedCourse('');
-            } else {
-                setMessage(data.error || 'Erro ao criar matrícula');
-            }
-        } catch (err) {
-            console.error(err);
-            setMessage('Erro ao conectar com o servidor');
-        } finally {
-            setLoadingEnroll(false);
-        }
+        return age;
     };
 
-    return (
-        <form onSubmit={handleSubmit} className="bg-gray-50 p-4 rounded">
-            <div className="space-y-2">
-                <input
-                    type="email"
-                    placeholder="Email do usuário"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3 py-2 border rounded"
-                />
+    const percentage = (value: number) => {
+        if (totalGeral === 0) return 0;
+        return Math.round((value / totalGeral) * 100);
+    };
 
-                <select
-                    value={selectedCourse}
-                    onChange={(e) => setSelectedCourse(e.target.value)}
-                    className="w-full px-3 py-2 border rounded"
-                >
-                    <option value="">Selecione um curso</option>
-                    {courses.map((c) => (
-                        <option key={c._id} value={c._id}>{c.titulo}</option>
-                    ))}
-                </select>
+    const filterUsersByDate = (users: UserResponseDTO[]) => {
+    return users.filter(user => {
+        if (!user.createdAt) return false;
 
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white px-4 py-2 rounded"
-                    disabled={loadingEnroll}
-                >
-                    {loadingEnroll ? 'Matriculando...' : 'Matricular Manualmente'}
-                </button>
+        const date = new Date(user.createdAt);
+        const userYear = date.getFullYear();
+        const userMonth = date.getMonth();
 
-                {message && <p className="text-sm text-gray-700 mt-2">{message}</p>}
-            </div>
-        </form>
-    );
-}
+        if (userYear !== year) return false;
+        if (month !== null && userMonth !== month) return false;
 
-interface HomeProps {
-    onNavigate?: (section: string) => void;
-}
-
-export default function Home({ onNavigate }: HomeProps) {
-    const [stats, setStats] = useState({
-        cursos: 0,
-        provas: 0,
-        alunos: 0
-    });
-    const [loading, setLoading] = useState(true);
+        return true;
+        });
+    };
 
     useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const [cursosRes, provasRes, alunosRes] = await Promise.all([
-                    fetch('/api/cursos'),
-                    fetch('/api/provas'),
-                    fetch('/api/user')
-                ]);
+    const loadData = async () => {
+      try {
+        const usersData = await UserService.getAllUsers();
+        setUsers(usersData.users || []);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-                const cursosData = await cursosRes.json();
-                const provasData = await provasRes.json();
-                const alunosData = await alunosRes.json();
+    loadData();
+  }, []);
 
-                setStats({
-                    cursos: cursosData.cursos?.length || 0,
-                    provas: provasData.provas?.length || 0,
-                    alunos: alunosData.users?.length || 0
-                });
-            } catch (error) {
-                console.error('Erro ao carregar estatísticas:', error);
-            } finally {
-                setLoading(false);
-            }
+  useEffect(() => {
+    const filteredUsers = filterUsersByDate(users);
+
+    const statsCalculated = {
+        total: filteredUsers.length,
+        baptized: filteredUsers.filter(u => u.baptized).length,
+        notBaptized: filteredUsers.filter(u => u.baptized === false).length,
+        aceitouJesus: filteredUsers.filter(u => u.invitationofgrace === 'Aceitou Jesus').length,
+        reconciliou: filteredUsers.filter(u => u.invitationofgrace === 'Reconciliou').length,
+        recebeuOracao: filteredUsers.filter(u => u.invitationofgrace === 'Recebeu oração').length,
+        trocaIgreja: filteredUsers.filter(u => u.invitationofgrace === 'Troca de igreja').length,
+        homem: filteredUsers.filter(u => u.gender === 'Masculino').length,
+        mulher: filteredUsers.filter(u => u.gender === 'Feminino').length,
+    };
+
+    setStats(statsCalculated);
+}, [users, year, month]);
+
+
+    useEffect(() => {
+        const ageGroups = {
+            criancas: 0,
+            adolescentes: 0,
+            jovens: 0,
+            adultos: 0,
+            meiaIdade: 0,
+            idosos: 0,
         };
 
-        fetchStats();
-    }, []);
+        users.forEach(user => {
+            if (!user.birthdate) return;
+
+            const age = calculateAge(user.birthdate);
+
+            if (age <= 12) ageGroups.criancas++;
+            else if (age <= 17) ageGroups.adolescentes++;
+            else if (age <= 29) ageGroups.jovens++;
+            else if (age <= 44) ageGroups.adultos++;
+            else if (age <= 59) ageGroups.meiaIdade++;
+            else ageGroups.idosos++;
+        });
+
+        setAgeStats(ageGroups);
+    }, [users]);
+
+
+    // useEffect(() => {
+    // const loadData = async () => {
+    //     try {
+    //         const [usersData] = await Promise.all([
+    //             UserService.getAllUsers(),
+    //             // CelulaService.getAllCelulas()
+    //         ]);
+
+    //         // const user = usersData.users || [];
+    //         setUsers(usersData.users || [])
+
+    //         const statsCalculated = {
+    //             total: users.length,
+    //             baptized: users.filter(u => u.baptized === true).length,
+    //             notBaptized: users.filter(u => u.baptized === false).length,
+    //             aceitouJesus: users.filter(u => u.invitationofgrace === 'Aceitou Jesus').length,
+    //             reconciliou: users.filter(u => u.invitationofgrace === 'Reconciliou').length,
+    //             recebeuOracao: users.filter(u => u.invitationofgrace === 'Recebeu oração').length,
+    //             trocaIgreja: users.filter(u => u.invitationofgrace === 'Troca de igreja').length,
+    //             homem: users.filter(u => u.gender === 'Masculino').length,
+    //             mulher: users.filter(u => u.gender === 'Feminino').length,
+    //         };
+
+    //         setStats(statsCalculated);
+
+    //         const ageGroups = {
+    //             criancas: 0,
+    //             adolescentes: 0,
+    //             jovens: 0,
+    //             adultos: 0,
+    //             meiaIdade: 0,
+    //             idosos: 0,
+    //             };
+
+    //             users.forEach(user => {
+    //             if (!user.birthdate) return;
+
+    //             const age = calculateAge(user.birthdate);
+
+    //             if (age <= 12) ageGroups.criancas++;
+    //             else if (age <= 17) ageGroups.adolescentes++;
+    //             else if (age <= 29) ageGroups.jovens++;
+    //             else if (age <= 44) ageGroups.adultos++;
+    //             else if (age <= 59) ageGroups.meiaIdade++;
+    //             else ageGroups.idosos++;
+    //         });
+
+    //         const usersWithBirthdate = users.filter(u => u.birthdate);
+    //         const percentage = (value: number) => {
+    //         if (usersWithBirthdate.length === 0) return 0;
+    //         return Math.round((value / usersWithBirthdate.length) * 100);
+    //         };
+
+
+    //         setAgeStats(ageGroups);
+
+    //         // setUsersCount(usersData.users?.length || 0);
+    //         // setCelulaCount(celulasData.celulas?.length || 0)
+    //     } catch (error) {
+    //         if (error instanceof Error) {
+    //             console.error(error.message);
+    //         }
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    // loadData();
+    // }, []);
 
     if (loading) {
         return (
@@ -144,65 +215,108 @@ export default function Home({ onNavigate }: HomeProps) {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+                <h1 className="text-3xl font-bold text-gray-800">Painel Pastoral</h1>
                 <p className="text-gray-600 mt-2">Bem-vindo ao painel administrativo</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                {/* Cursos */}
-                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-emerald-500">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-600 text-sm font-medium">Total de Cursos</p>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{stats.cursos}</p>
-                        </div>
-                        <div className="bg-emerald-100 rounded-full p-3">
-                            <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
+            {/* Filtros */}
+            <div className="flex gap-4">
+                <select
+                value={year}
+                onChange={e => setYear(Number(e.target.value))}
+                className="border rounded px-3 py-2"
+                >
+                <option value={2026}>2026</option>
+                <option value={2027}>2027</option>
+                <option value={2028}>2028</option>
+                </select>
 
-                {/* Provas */}
-                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-teal-500">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-600 text-sm font-medium">Total de outras infos</p>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{stats.provas}</p>
-                        </div>
-                        <div className="bg-teal-100 rounded-full p-3">
-                            <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Alunos */}
-                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-cyan-500">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-gray-600 text-sm font-medium">Total de Alunos</p>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{stats.alunos}</p>
-                        </div>
-                        <div className="bg-cyan-100 rounded-full p-3">
-                            <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
+                <select
+                value={month ?? ''}
+                onChange={e =>
+                    setMonth(e.target.value === '' ? null : Number(e.target.value))
+                }
+                className="border rounded px-3 py-2"
+                >
+                <option value="">Anual</option>
+                {[
+                    'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                    'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'
+                ].map((m, i) => (
+                    <option key={i} value={i}>{m}</option>
+                ))}
+                </select>
             </div>
 
-            {/* Seção: Solicitações e Matrículas Manuais
-            <div className="mt-6 bg-white rounded-lg shadow-md p-6">
-                <div className="mt-6">
-                    <SolicitacoesMatricula />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Total de membros (users) */}
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-cyan-500">
+                    <p className="text-gray-600 text-sm font-medium">Total de Geral</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{totalGeral}</p>
                 </div>
-            </div> */}
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-cyan-500">
+                    <p className="text-gray-600 text-sm font-medium">Total de Membros</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.total}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+                    <p className="text-gray-600 text-sm font-medium">Batizados</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.baptized}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
+                    <p className="text-gray-600 text-sm font-medium">Não Batizados</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.notBaptized}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                    <p className="text-gray-600 text-sm font-medium">Aceitou Jesus</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.aceitouJesus}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                    <p className="text-gray-600 text-sm font-medium">Reconciliou</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.reconciliou}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                    <p className="text-gray-600 text-sm font-medium">Troca de Igreja</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.trocaIgreja}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                    <p className="text-gray-600 text-sm font-medium">Homens</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.homem}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                    <p className="text-gray-600 text-sm font-medium">Mulheres</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.mulher}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">
+                    Faixa Etária dos Membros
+                </h2>
+
+                {[
+                    { label: '(0–12)', value: ageStats.criancas },
+                    { label: '(13–17)', value: ageStats.adolescentes },
+                    { label: '(18–29)', value: ageStats.jovens },
+                    { label: '(30–44)', value: ageStats.adultos },
+                    { label: '(45–59)', value: ageStats.meiaIdade },
+                    { label: '(60+)', value: ageStats.idosos },
+                ].map(item => (
+                    <div key={item.label} className="mb-3">
+                    <div className="flex justify-between text-sm text-gray-600 mb-1">
+                    <span>{item.label}</span>
+                    <span className="font-medium text-gray-700">
+                        {percentage(item.value)}% • {item.value} pessoas
+                    </span>
+                    </div>
+
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                        className="bg-cyan-600 h-2 rounded-full"
+                        style={{ width: `${percentage(item.value)}%` }}
+                        />
+                    </div>
+                    </div>
+                ))}
+                </div>
+            </div>
         </div>
     );
 }

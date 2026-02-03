@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 
 import Home from '@/components/dashboard/UserHome';
 import PerfilAluno from '@/components/dashboard/PerfilAluno';
-import CursosDisponiveis from '@/components/dashboard/CursosDisponiveis';
-import CursoConteudo from '@/components/dashboard/CursoConteudo';
+import CursosDisponiveis from '@/components/dashboard/curso/CursosDisponiveis';
+import CursoConteudo from '@/components/dashboard/curso/CursoConteudo';
 
 type ActiveSection =
     | 'home'
@@ -30,16 +30,6 @@ export default function UserDashboard() {
 
     const [menuOpen, setMenuOpen] = useState(false);
 
-    // useEffect(() => {
-    //     const userData = localStorage.getItem('user');
-    //     if (!userData) {
-    //         router.push('/login/user');
-    //         return;
-    //     }
-    //     setUser(JSON.parse(userData));
-    // }, [router]);
-
-        // 🔒 Carrega o usuário autenticado
     useEffect(() => {
         const userData = localStorage.getItem('user');
 
@@ -81,27 +71,29 @@ export default function UserDashboard() {
 
             {/* SIDEBAR */}
             <aside
-                className={`
-                    bg-gradient-to-b from-emerald-600 to-teal-600
-                    text-white flex flex-col
-                    w-64
-                    md:relative md:translate-x-0
-                    fixed top-0 left-0 h-screen z-50
-                    transition-transform duration-300
-                    ${menuOpen ? 'translate-x-0' : '-translate-x-full'}
-                    md:h-auto
-                `}
-            >
+  className={`
+    bg-gradient-to-b from-emerald-600 to-teal-600
+    text-white flex flex-col
+    w-64
+    fixed top-0 left-0 h-screen z-50
+    transition-transform duration-300
+    ${menuOpen ? 'translate-x-0' : '-translate-x-full'}
+    md:relative md:translate-x-0 md:h-auto
+  `}
+>
+
+
                 <div className="p-6 border-b border-emerald-700">
                     <h1 className="text-xl font-bold leading-tight">
-                        Portal CNH Fácil<br />
+                        SUA LOGO<br />
                     </h1>
                     <p className="text-emerald-100 text-sm mt-1">
                         {user.name}
                     </p>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-2">
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+
                     <button
                         onClick={() => {
                             setActiveSection('disponiveis');

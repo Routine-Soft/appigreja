@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { UserService } from '@/service/user/UserService';
+import { getDashboardRoute } from '@/utils/getDashboardRoute';
 
 export default function UserLoginPage() {
     const router = useRouter();
@@ -18,21 +20,7 @@ export default function UserLoginPage() {
         setLoading(true);
 
         try {
-            const response = await fetch('/api/user/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                setError(data.error || 'Erro ao fazer login');
-                setLoading(false);
-                return;
-            }
+            const data = await UserService.loginUser(formData.email, formData.password);
 
             // 🔥 SALVA O USER NO LOCAL STORAGE
             localStorage.setItem('user', JSON.stringify(data.user));
@@ -42,11 +30,14 @@ export default function UserLoginPage() {
                 localStorage.setItem('token', data.token);
             }
 
-            // Redireciona ao dashboard Single Tenant
-            router.push('/dashboard');
+            await router.push('/admin/dashboard');
             
-        } catch (err) {
-            setError('Erro ao conectar com o servidor');
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('Erro ao fazer login');
+            }
         } finally {
             setLoading(false);
         }
@@ -71,8 +62,8 @@ export default function UserLoginPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
-                        <h1 className="text-3xl font-bold text-gray-800">Login do Aluno</h1>
-                        <p className="text-gray-600">Acesse sua conta para estudar</p>
+                        <h1 className="text-3xl font-bold text-gray-800">Login do Membro</h1>
+                        <p className="text-gray-600">Acesse sua conta</p>
                     </div>
 
                     {/* Error Message */}

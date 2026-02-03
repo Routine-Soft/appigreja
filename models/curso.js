@@ -21,7 +21,16 @@ const moduloSchema = new Schema({
     conteudo: {
         type: String,
         trim: true
-    }
+    },
+    preco: {
+        type: Number,
+        min: [0, 'O preço não pode ser negativo'],
+        default: 0
+    },
+    videoUrl: {
+        type: String,
+        trim: true
+    },
 }, { timestamps: true });
 
 // Schema para Curso
@@ -46,11 +55,6 @@ const cursoSchema = new Schema({
         type: Number, // em horas
         min: [0, 'A duração não pode ser negativa']
     },
-    preco: {
-        type: Number,
-        min: [0, 'O preço não pode ser negativo'],
-        default: 0
-    },
     imagem: {
         type: String,
         trim: true
@@ -70,7 +74,7 @@ const cursoSchema = new Schema({
 });
 
 // Exportando o Model
-const cursoModel = mongoose.model('cursoModel', cursoSchema);
-
+//const cursoModel = mongoose.model('cursoModel', cursoSchema);
+const cursoModel = mongoose.models.cursoModel || mongoose.model('cursoModel', cursoSchema);
 export default cursoModel;
 

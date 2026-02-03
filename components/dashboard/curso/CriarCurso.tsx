@@ -107,8 +107,8 @@ export default function CriarCurso({ onSuccess }: CriarCursoProps) {
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
-            <h1 className="text-3xl font-bold text-gray-800">Criar Novo Curso</h1>
-            <p className="text-gray-600">Preencha os dados do curso</p>
+            <h1 className="text-3xl font-bold text-gray-800">Criar Novo</h1>
+            <p className="text-gray-600">Preencha os dados</p>
 
             {error && (
                 <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded">

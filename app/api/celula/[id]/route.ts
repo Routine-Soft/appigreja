@@ -1,34 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/database/db';
-import cursoModel from '@/models/curso';
+import CelulaModel from '@/models/celula';
 
 // ---------------------------------------------------------
-// GET — Buscar curso por ID
+// GET — Buscar celula por ID
 // ---------------------------------------------------------
 export async function GET(
     request: NextRequest,
     context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = await context.params; // 👈 AGORA CORRETO
-
         await db();
+        const { id } = await context.params;
+        const celula = await CelulaModel.findById(id);
 
-        const curso = await cursoModel.findById(id);
-
-        if (!curso) {
+        if (!celula) {
             return NextResponse.json(
-                { error: 'Curso não encontrado' },
+                { error: 'Celula não encontrada' },
                 { status: 404 }
             );
         }
 
         return NextResponse.json(
-            { message: 'Curso encontrado', curso },
+            { message: 'Celula encontrada', celula },
             { status: 200 }
         );
     } catch (error) {
-        console.error('Erro ao buscar curso:', error);
+        console.error('Erro ao buscar celula:', error);
         return NextResponse.json(
             { error: 'Erro interno do servidor' },
             { status: 500 }
@@ -38,7 +36,7 @@ export async function GET(
 
 
 // ---------------------------------------------------------
-// PATCH — Atualizar curso
+// PATCH — Atualizar celula
 // ---------------------------------------------------------
 export async function PATCH(
     request: NextRequest,
@@ -50,24 +48,24 @@ export async function PATCH(
         await db();
 
         const body = await request.json();
-        const curso = await cursoModel.findById(id);
+        const celula = await CelulaModel.findById(id);
 
-        if (!curso) {
+        if (!celula) {
             return NextResponse.json(
-                { error: 'Curso não encontrado' },
+                { error: 'Celula não encontrada' },
                 { status: 404 }
             );
         }
 
-        Object.assign(curso, body);
-        await curso.save();
+        Object.assign(celula, body);
+        await celula.save();
 
         return NextResponse.json(
-            { message: 'Curso atualizado com sucesso', curso },
+            { message: 'Celula atualizada com sucesso', celula },
             { status: 200 }
         );
     } catch (error) {
-        console.error('Erro ao atualizar curso:', error);
+        console.error('Erro ao atualizar celula:', error);
         return NextResponse.json(
             { error: 'Erro interno do servidor' },
             { status: 500 }
@@ -77,7 +75,7 @@ export async function PATCH(
 
 
 // ---------------------------------------------------------
-// DELETE — Deletar curso
+// DELETE — Deletar celula
 // ---------------------------------------------------------
 export async function DELETE(
     request: NextRequest,
@@ -88,21 +86,21 @@ export async function DELETE(
 
         await db();
 
-        const deletedCurso = await cursoModel.findByIdAndDelete(id);
+        const deletedCelula = await CelulaModel.findByIdAndDelete(id);
 
-        if (!deletedCurso) {
+        if (!deletedCelula) {
             return NextResponse.json(
-                { error: 'Curso não encontrado' },
+                { error: 'Celula não encontrada' },
                 { status: 404 }
             );
         }
 
         return NextResponse.json(
-            { message: 'Curso deletado com sucesso' },
+            { message: 'Celula deletada com sucesso' },
             { status: 200 }
         );
     } catch (error) {
-        console.error('Erro ao deletar curso:', error);
+        console.error('Erro ao deletar celula:', error);
         return NextResponse.json(
             { error: 'Erro interno do servidor' },
             { status: 500 }

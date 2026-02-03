@@ -2,16 +2,27 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { UserService } from '@/service/user/UserService';
+import { CreateUserDTO } from '@/dto/user/UserDTO';
 
 export default function UserRegisterPage() {
     const router = useRouter();
-    const [formData, setFormData] = useState({
+
+    const [formData, setFormData] = useState<CreateUserDTO>({
         name: '',
         email: '',
-        password: '',
-        confirmPassword: '',
         phone: '',
-        username: ''
+        birthdate: new Date(),
+        gender: '',
+        church: '',
+        cep: '',
+        address: '',
+        neighborhood: '',
+        city: '',
+        state: '',
+        invitationofgrace: '',
+        baptized: false,
+        password: '',
     });
     
     const [error, setError] = useState('');
@@ -21,48 +32,32 @@ export default function UserRegisterPage() {
         e.preventDefault();
         setError('');
 
-        // Validação de senha
-        if (formData.password !== formData.confirmPassword) {
-            setError('As senhas não coincidem');
-            return;
-        }
-
-        if (formData.password.length < 6) {
-            setError('A senha deve ter pelo menos 6 caracteres');
+        if (formData.password.length < 3) {
+            setError('A senha deve ter pelo menos 3 caracteres');
             return;
         }
 
         setLoading(true);
 
         try {
-            const { confirmPassword, ...dataToSend } = formData;
-            const response = await fetch('/api/user/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(dataToSend),
-            });
+             const data = await UserService.createUser(formData);
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                setError(data.error || 'Erro ao criar conta');
-                setLoading(false);
-                return;
-            }
-
-            
-            // SEU BACKEND PRECISA RETORNAR "user"
+            // ✅ salva o usuário retornado pelo backend
             if (data.user) {
                 localStorage.setItem('user', JSON.stringify(data.user));
             }
 
-            // Redirecionar direto para o dashboard do aluno
-            await router.push('/dashboard');
+            // (opcional, mas recomendado)
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+            }
 
-        } catch (err) {
-            setError('Erro ao conectar com o servidor');
+            await router.push('/admin/dashboard');
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            }
+        } finally {
             setLoading(false);
         }
     };
@@ -85,8 +80,8 @@ export default function UserRegisterPage() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                             </svg>
                         </div>
-                        <h1 className="text-3xl font-bold text-gray-800">Criar Conta de Aluno</h1>
-                        <p className="text-gray-600">Cadastre-se para começar a estudar</p>
+                        <h1 className="text-3xl font-bold text-gray-800">Criar Conta de membro</h1>
+                        <p className="text-gray-600">Cadastre-se em poucos minutos</p>
                     </div>
 
                     {/* Error Message */}
@@ -114,6 +109,21 @@ export default function UserRegisterPage() {
                         </div>
 
                         <div>
+                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                                Telefone
+                            </label>
+                            <input
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
+                                placeholder="(00) 00000-0000"
+                            />
+                        </div>
+
+                        <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                                 Email <span className="text-red-500">*</span>
                             </label>
@@ -130,36 +140,6 @@ export default function UserRegisterPage() {
                         </div>
 
                         <div>
-                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                                Nome de usuário
-                            </label>
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                                placeholder="nomedeusuario"
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                                Telefone
-                            </label>
-                            <input
-                                type="tel"
-                                id="phone"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                                placeholder="(00) 00000-0000"
-                            />
-                        </div>
-
-                        <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                                 Senha <span className="text-red-500">*</span>
                             </label>
@@ -170,23 +150,7 @@ export default function UserRegisterPage() {
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
-                                minLength={6}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
-                                placeholder="••••••••"
-                            />
-                        </div>
-
-                        <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                                Confirmar Senha <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                required
+                                minLength={3}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-gray-900"
                                 placeholder="••••••••"
                             />
