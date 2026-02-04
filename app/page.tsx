@@ -62,7 +62,7 @@ export default function Home() {
           "
         >
           <Image
-            src="/img/dashboard1.png"
+            src="/imgs/dashboard1.png"
             alt="Dashboard do App Igreja"
             width={1200}
             height={600}
@@ -85,7 +85,7 @@ export default function Home() {
           "
         >
           <Image
-            src="/img/dashboard2.png"
+            src="/imgs/dashboard2.png"
             alt="Dashboard do App Igreja"
             width={1200}
             height={600}
