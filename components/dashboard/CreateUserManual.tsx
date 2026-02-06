@@ -18,6 +18,7 @@ const initialFormData: CreateUserDTO = {
     city: '',
     state: '',
     invitationofgrace: '',
+    status: '',
     baptized: false,
     password: '123',
 };
@@ -25,8 +26,13 @@ const initialFormData: CreateUserDTO = {
 const INVITATION_OF_GRACE_OPTIONS = [
 'Aceitou Jesus',
 'Reconciliou',
-'Recebeu oração',
 'Troca de igreja',
+];
+
+const STATUS_OPTIONS = [
+'Está na igreja',
+'Está afastado',
+'Foi para outra igreja',
 ];
 
 const DEFAULT_PASSWORD = '123';
@@ -161,17 +167,17 @@ export default function CreateUserManual() {
                             />
                         </div>
 
-<input
-  type="date"
-  name="birthdate"
-  value={
-    formData.birthdate
-      ? formData.birthdate.toLocaleDateString('en-CA')
-      : ''
-  }
-  onChange={handleChange}
-  className="w-full px-4 py-3 border rounded-lg"
-/>
+                        <input
+                        type="date"
+                        name="birthdate"
+                        value={
+                            formData.birthdate
+                            ? formData.birthdate.toLocaleDateString('en-CA')
+                            : ''
+                        }
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border rounded-lg"
+                        />
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -301,6 +307,29 @@ export default function CreateUserManual() {
                             />
                             <span className="text-sm text-gray-700">Batizado</span>
                         </label>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Status
+                            </label>
+
+                            <select
+                                name="status"
+                                value={formData.status}
+                                onChange={handleChange}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg
+                                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                                        outline-none transition-all text-gray-900 bg-white"
+                            >
+                                <option value="">Selecione uma opção</option>
+
+                                {STATUS_OPTIONS.map(option => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                                ))}
+                            </select>
+                        </div>
 
                         {/* <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">

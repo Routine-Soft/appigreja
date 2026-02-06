@@ -23,6 +23,7 @@ export default function UserRegisterPage() {
         invitationofgrace: '',
         baptized: false,
         password: '',
+        status: 'Está na igreja',
     });
     
     const [error, setError] = useState('');

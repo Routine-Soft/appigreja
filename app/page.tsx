@@ -47,6 +47,26 @@ export default function Home() {
         </button>
       </a>
 
+      <a
+        href="https://wa.me/5521992002356"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="
+          hidden md:inline-flex
+          items-center gap-2
+          ml-2
+          px-8 py-4
+          rounded-full
+          bg-green-500 text-white
+          font-semibold text-lg
+          hover:bg-green-600 hover:scale-105
+          transition-all
+        "
+      >
+        💬 WhatsApp
+      </a>
+
+
       </section>
 
       <section className="py-2 bg-white" >
@@ -342,13 +362,40 @@ export default function Home() {
 </section>
 
 
-      {/* FOOTER */}
-      <footer
-        id="contato"
-        className="py-12 text-center text-sm text-gray-500"
-      >
-        © {new Date().getFullYear()} App Igreja — Cuidando de vidas ❤️
-      </footer>
-    </div>
+{/* FOOTER */}
+<footer
+  id="contato"
+  className="py-12 text-center text-sm text-gray-500"
+>
+  © {new Date().getFullYear()} App Igreja — Cuidando de vidas ❤️
+</footer>
+
+<a
+  href="https://wa.me/5521992002356"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="
+    fixed bottom-6 right-6 z-50
+    flex items-center justify-center
+    w-14 h-14 rounded-full
+    bg-green-500 text-white
+    shadow-2xl
+    hover:bg-green-600 hover:scale-110
+    transition-all
+  "
+  aria-label="Fale conosco no WhatsApp"
+>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 32 32"
+    fill="currentColor"
+    className="w-7 h-7"
+  >
+    <path d="M16.003 3C9.384 3 4 8.383 4 15c0 2.646.87 5.095 2.34 7.09L4 29l7.105-2.297A11.94 11.94 0 0 0 16.003 27C22.62 27 28 21.617 28 15S22.62 3 16.003 3zm0 21.8a9.8 9.8 0 0 1-4.99-1.36l-.36-.21-4.22 1.36 1.38-4.11-.24-.38A9.77 9.77 0 0 1 6.2 15c0-5.4 4.4-9.8 9.803-9.8 5.4 0 9.8 4.4 9.8 9.8 0 5.4-4.4 9.8-9.8 9.8zm5.39-7.36c-.29-.14-1.71-.84-1.98-.94-.27-.1-.47-.14-.67.14-.2.29-.77.94-.95 1.13-.17.19-.34.21-.63.07-.29-.14-1.23-.45-2.34-1.44-.87-.78-1.46-1.74-1.63-2.03-.17-.29-.02-.45.13-.6.14-.14.29-.34.43-.51.14-.17.19-.29.29-.48.1-.19.05-.36-.02-.51-.07-.14-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.19 0-.51.07-.78.36-.27.29-1.02 1-1.02 2.44 0 1.44 1.05 2.83 1.2 3.03.14.19 2.07 3.16 5.01 4.43.7.3 1.24.48 1.66.61.7.22 1.33.19 1.83.12.56-.08 1.71-.7 1.95-1.37.24-.67.24-1.24.17-1.37-.07-.12-.27-.19-.56-.33z" />
+  </svg>
+</a>
+
+
+</div>
   );
 }

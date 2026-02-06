@@ -78,6 +78,9 @@ export async function PATCH(
         if (data.permissions !== undefined) {
             user.permissions = data.permissions;
         }
+        if (data.status !== undefined) {
+            user.status = data.status;
+        }
 
         // Adicione mais campos conforme necessário
 

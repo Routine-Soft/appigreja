@@ -21,6 +21,9 @@ export default function Home() {
         trocaIgreja: 0,
         homem: 0,
         mulher: 0,
+        estaNaIgreja: 0,
+        estaAfastado: 0,
+        foiPraOutraIgreja: 0,
     });
 
     const [ageStats, setAgeStats] = useState({
@@ -101,6 +104,10 @@ export default function Home() {
         trocaIgreja: filteredUsers.filter(u => u.invitationofgrace === 'Troca de igreja').length,
         homem: filteredUsers.filter(u => u.gender === 'Masculino').length,
         mulher: filteredUsers.filter(u => u.gender === 'Feminino').length,
+        estaNaIgreja: filteredUsers.filter(u => u.status === 'Está na igreja').length,
+        estaAfastado: filteredUsers.filter(u => u.status === 'Está afastado').length,
+        foiPraOutraIgreja: filteredUsers.filter(u => u.status === 'Foi para outra igreja').length,
+
     };
 
     setStats(statsCalculated);
@@ -132,77 +139,6 @@ export default function Home() {
 
         setAgeStats(ageGroups);
     }, [users]);
-
-
-    // useEffect(() => {
-    // const loadData = async () => {
-    //     try {
-    //         const [usersData] = await Promise.all([
-    //             UserService.getAllUsers(),
-    //             // CelulaService.getAllCelulas()
-    //         ]);
-
-    //         // const user = usersData.users || [];
-    //         setUsers(usersData.users || [])
-
-    //         const statsCalculated = {
-    //             total: users.length,
-    //             baptized: users.filter(u => u.baptized === true).length,
-    //             notBaptized: users.filter(u => u.baptized === false).length,
-    //             aceitouJesus: users.filter(u => u.invitationofgrace === 'Aceitou Jesus').length,
-    //             reconciliou: users.filter(u => u.invitationofgrace === 'Reconciliou').length,
-    //             recebeuOracao: users.filter(u => u.invitationofgrace === 'Recebeu oração').length,
-    //             trocaIgreja: users.filter(u => u.invitationofgrace === 'Troca de igreja').length,
-    //             homem: users.filter(u => u.gender === 'Masculino').length,
-    //             mulher: users.filter(u => u.gender === 'Feminino').length,
-    //         };
-
-    //         setStats(statsCalculated);
-
-    //         const ageGroups = {
-    //             criancas: 0,
-    //             adolescentes: 0,
-    //             jovens: 0,
-    //             adultos: 0,
-    //             meiaIdade: 0,
-    //             idosos: 0,
-    //             };
-
-    //             users.forEach(user => {
-    //             if (!user.birthdate) return;
-
-    //             const age = calculateAge(user.birthdate);
-
-    //             if (age <= 12) ageGroups.criancas++;
-    //             else if (age <= 17) ageGroups.adolescentes++;
-    //             else if (age <= 29) ageGroups.jovens++;
-    //             else if (age <= 44) ageGroups.adultos++;
-    //             else if (age <= 59) ageGroups.meiaIdade++;
-    //             else ageGroups.idosos++;
-    //         });
-
-    //         const usersWithBirthdate = users.filter(u => u.birthdate);
-    //         const percentage = (value: number) => {
-    //         if (usersWithBirthdate.length === 0) return 0;
-    //         return Math.round((value / usersWithBirthdate.length) * 100);
-    //         };
-
-
-    //         setAgeStats(ageGroups);
-
-    //         // setUsersCount(usersData.users?.length || 0);
-    //         // setCelulaCount(celulasData.celulas?.length || 0)
-    //     } catch (error) {
-    //         if (error instanceof Error) {
-    //             console.error(error.message);
-    //         }
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
-    // loadData();
-    // }, []);
 
     if (loading) {
         return (
@@ -251,11 +187,11 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Total de membros (users) */}
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-cyan-500">
-                    <p className="text-gray-600 text-sm font-medium">Total de Geral</p>
+                    <p className="text-gray-600 text-sm font-medium">Total de Usuários</p>
                     <p className="text-3xl font-bold text-gray-800 mt-2">{totalGeral}</p>
                 </div>
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-cyan-500">
-                    <p className="text-gray-600 text-sm font-medium">Total de Membros do período</p>
+                    <p className="text-gray-600 text-sm font-medium">Total de Usuários do período</p>
                     <p className="text-3xl font-bold text-gray-800 mt-2">{stats.total}</p>
                 </div>
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
@@ -275,7 +211,7 @@ export default function Home() {
                     <p className="text-3xl font-bold text-gray-800 mt-2">{stats.reconciliou}</p>
                 </div>
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
-                    <p className="text-gray-600 text-sm font-medium">Troca de Igreja</p>
+                    <p className="text-gray-600 text-sm font-medium">Trocou de Igreja</p>
                     <p className="text-3xl font-bold text-gray-800 mt-2">{stats.trocaIgreja}</p>
                 </div>
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
@@ -285,6 +221,18 @@ export default function Home() {
                 <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
                     <p className="text-gray-600 text-sm font-medium">Mulheres</p>
                     <p className="text-3xl font-bold text-gray-800 mt-2">{stats.mulher}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                    <p className="text-gray-600 text-sm font-medium">Estão na Igreja</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.estaNaIgreja}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                    <p className="text-gray-600 text-sm font-medium">Estão Afastados</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.estaAfastado}</p>
+                </div>
+                <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
+                    <p className="text-gray-600 text-sm font-medium">Foram embora pra outra igreja</p>
+                    <p className="text-3xl font-bold text-gray-800 mt-2">{stats.foiPraOutraIgreja}</p>
                 </div>
                 <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">

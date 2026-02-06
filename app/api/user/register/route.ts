@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
             invitationofgrace: user.invitationofgrace,
             baptized: user.baptized,
             permissions: user.permissions,
+            status: user.status,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
         }

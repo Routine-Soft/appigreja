@@ -19,6 +19,7 @@ export interface CreateUserDTO {
     baptized: boolean;
     password: string;
     permissions?: string[];
+    status: string;
 }
 
 export interface UpdateUserDTO {
@@ -37,6 +38,7 @@ export interface UpdateUserDTO {
     baptized?: boolean;
     password?: string;
     permissions?: string[];
+    status?: string;
 }
 
 export interface UserResponseDTO {
@@ -55,6 +57,7 @@ export interface UserResponseDTO {
     invitationofgrace: string;
     baptized: boolean;
     permissions?: string[];
+    status: string;
     createdAt: Date;
     updatedAt: Date;
 }

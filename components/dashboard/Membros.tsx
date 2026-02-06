@@ -42,11 +42,12 @@ const FIELD_LABELS: Record<string, string> = {
   city: 'Cidade',
   state: 'Estado',
   invitationofgrace: 'Convite da Graça',
+  status: 'Status',
 };
-
 
 const GENDER_OPTIONS = ['Masculino', 'Feminino'];
 const INVITATION_OPTIONS = ['Aceitou Jesus', 'Reconciliou', 'Troca de igreja'];
+const STATUS_OPTIONS = ['Está na igreja', 'Está afastado', 'Foi para outra igreja'];
 
 export default function Membros() {
   const [users, setUsers] = useState<UserResponseDTO[]>([]);
@@ -129,16 +130,7 @@ export default function Membros() {
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
       <table className="w-full">
         <thead className="bg-gray-100 hidden md:table-header-group">
-          <tr>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">
-              Nome
-            </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600" />
-            <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600" />
-            <th className="px-4 py-3 text-right text-sm font-semibold text-gray-600">
-              Ações
-            </th>
-          </tr>
+          <tr></tr>
         </thead>
 
         <tbody>
@@ -183,6 +175,21 @@ export default function Membros() {
                       {user.baptized ? 'Batizado' : 'Não Batizado'}
                     </span>
                   </td>
+
+                  <span
+                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold
+                      ${
+                        user.status === 'Está na igreja'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : user.status === 'Está afastado'
+                          ? 'bg-red-100 text-red-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      }
+                    `}
+                  >
+                    {user.status}
+                  </span>
+
 
                   <td className="px-4 py-3 text-right block md:table-cell">
                     <div className="flex flex-col md:flex-row md:justify-end gap-2">
@@ -302,6 +309,30 @@ export default function Membros() {
                           >
                             <option value="true">Sim</option>
                             <option value="false">Não</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block font-medium text-gray-700 mb-1">
+                            Status
+                          </label>
+                          <select
+                            disabled={!isEditing}
+                            className="w-full max-w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:bg-gray-100"
+                            value={data.status ?? ''}
+                            onChange={e =>
+                              setEditForm(prev => ({
+                                ...prev,
+                                status: e.target.value,
+                              }))
+                            }
+                          >
+                            <option value="">Selecione</option>
+                            {STATUS_OPTIONS.map(opt => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            ))}
                           </select>
                         </div>
                       </div>

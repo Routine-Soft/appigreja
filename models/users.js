@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import argon2 from 'argon2';
+import { type } from 'os';
 
 // Definindo o Schema
 const userSchema = new Schema({
@@ -66,7 +67,10 @@ const userSchema = new Schema({
     permissions: {
         type: [String],
         default: []
-    }
+    },
+    status: {
+        type: String,
+    }, 
 }, { 
     timestamps: true,
 });
